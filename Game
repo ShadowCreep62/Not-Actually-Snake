@@ -1,0 +1,197 @@
+//constants
+var JUMPHEIGHT = 50;
+var PLAYERHEIGHT = 40;
+var PLAYERWIDTH = PLAYERHEIGHT/2;
+var SPEED = 10;
+var brown = new Color(139, 69, 19);
+
+//objects
+var player;
+var instuctions;
+var world;
+var replay;
+
+//most recent variables
+var startposition;
+var distTravel;
+
+
+/*the code that will run at the start*/
+function start(){
+    
+    world = [];
+    distTravel = 0;
+    
+    player = new Rectangle(PLAYERWIDTH, PLAYERHEIGHT);
+    player.setColor(Color.blue);
+    player.setPosition(getWidth()/2, (((getHeight()-player.getHeight()-player.getHeight())/2)-player.getHeight()/2));
+    add(player);
+    
+    var ground = new Rectangle(getWidth()+50, getHeight()/2);
+    ground.setColor(brown);
+    ground.setPosition(0,getHeight()/2);
+    add(ground);
+    world.push(ground);
+    
+    var grass = new Rectangle(getWidth()+50, 20);
+    grass.setColor(Color.green);
+    grass.setPosition(0,getHeight()/2);
+    add(grass);
+    world.push(grass);
+    
+    var obstacle = new Rectangle(20, 20);
+    obstacle.setColor(Color.red);
+    obstacle.setPosition(getWidth()-obstacle.getWidth(), player.getY()-10);
+    add(obstacle);
+    world.push(obstacle);
+    
+    var platform = new Rectangle(50, 20);
+    platform.setColor(Color.orange);
+    platform.setPosition(getWidth()+200, grass.getY());
+    add(platform);
+    world.push(platform);
+    
+    var goal = new Rectangle(20, 30);
+    goal.setColor(Color.purple);
+    goal.setPosition(getWidth()+300, grass.getY());
+    add(goal);
+    world.push(goal);
+    
+    instuctions = new Text("Arrow keys to move", "10pt Arial");
+    instuctions.setPosition(0, instuctions.getHeight());
+    add(instuctions);
+    
+	keyDownMethod(keyDown);
+	setTimer(gravity, 0.2);
+}
+
+/*the code that will run when a key is pressed*/
+function keyDown(e){
+    //checks if left buton pressed 
+	if (e.keyCode == Keyboard.LEFT) {
+	    var hasElem = false;
+	    for(var i=0;i<=player.getHeight();i++){
+	        var elem = getElementAt(player.getX() - 1, player.getY()+i);
+	        if(elem!=null){
+	            hasElem=true;
+	            if(elem.getColor()==Color.red){
+                    die();
+                }
+	        }
+	    }
+	    
+        if(!hasElem){
+            var elem = getElementAt(player.getX()+player.getWidth()/2, player.getY()+player.getHeight());
+            moveWorld(10);
+            distTravel-=10;
+        }
+	}
+	
+	//checks if right buton pressed 
+	if(e.keyCode == Keyboard.RIGHT){
+	    var hasElem = false;
+	    for(var i=0;i<=player.getHeight();i++){
+	        var elem = getElementAt(player.getX() + player.getWidth() + 1, player.getY()+i);
+	        if(elem!=null){
+	            hasElem=true;
+	            if(elem.getColor()==Color.red){
+                    die();
+                }
+	        }
+	    }
+        if(!hasElem){
+            var elem = getElementAt(player.getX()+player.getWidth()/2, player.getY()+player.getHeight());
+            moveWorld(-10);
+            distTravel+=10;
+        }
+	}
+	
+	//checks if up buton pressed 
+	if (e.keyCode == Keyboard.UP) {
+	    var elemUp = getElementAt(player.getX()+PLAYERWIDTH/2, player.getY()-1);
+	    var elemDown = getElementAt(player.getX()+PLAYERWIDTH/2, player.getY()+player.getHeight()+1);
+	    if(elemUp==null&&elemDown!=null){
+	        startposition = player.getY();
+	        stopTimer(gravity);
+    	    setTimer(jump, 0.2);
+	    }
+	}
+	
+}
+
+function gravity(){
+    var elem = getElementAt(player.getX()+PLAYERWIDTH/2, player.getY()+player.getHeight()+1);
+    if(elem==null){
+        if(player.getY()<world[1].getY()){
+    		player.move(0, 1);
+        }else{
+            player.move(0, 5);
+        }
+    }else{
+        if(elem.getColor()==Color.red){
+            die();
+        }else if(elem.getColor()==Color.purple){
+            win();
+        }
+    }
+    
+    if(player.getY()>getHeight()){
+        die();
+    }
+    
+}
+
+function jump(){
+    if(player.getY()>startposition - JUMPHEIGHT){
+        var elem = getElementAt(player.getX()+player.getWidth()/2, player.getY()-1)
+        if(elem==null){
+            player.move(0,-1);
+        }else{
+            if(elem.getColor()==Color.red){
+                die();
+            }
+            stopTimer(jump);
+            setTimer(gravity, 0.2);
+        }
+    }else{
+        stopTimer(jump);
+        setTimer(gravity, 0.2);
+    }
+}
+
+function moveWorld(dist){
+    for(var i=0;i<world.length;i++){
+        world[i].move(dist, 0);
+    }
+}
+function die(){
+    player.setPosition(getWidth()/2, ((getHeight()-player.getHeight()-player.getHeight())/2)-player.getHeight()/2);
+    moveWorld(distTravel);
+    distTravel = 0;
+    stopTimer(jump);
+    stopTimer(gravity);
+    setTimer(gravity, 0.2);
+}
+function win(){
+    remove(player);
+    remove(instuctions);
+    stopTimer(gravity);
+    stopTimer(jump);
+    for(var i=0;i<world.length;i++){
+        remove(world[i]);
+    }
+    var victory = new Text("You Win!", "50pt Arial");
+    victory.setPosition(getWidth()/2-victory.getWidth()/2, getHeight()/2);
+    add(victory);
+    replay = new Text("Play Again?", "25pt Arial");
+    replay.setPosition(getWidth()/2-replay.getWidth()/2, getHeight()/2+replay.getHeight()*2);
+    add(replay);
+    mouseClickMethod(mouseClick);
+}
+function mouseClick(e){
+    var elem = getElementAt(e.getX(), e.getY());
+    if(elem==replay){
+        removeAll();
+        start();
+    }
+}
