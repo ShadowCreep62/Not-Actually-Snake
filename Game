@@ -22,8 +22,8 @@ function start(){
     world = [];
     distTravel = 0;
     
-    player = new Rectangle(PLAYERWIDTH, PLAYERHEIGHT);
-    player.setColor(Color.blue);
+    player = new  WebImage("https://codehs.com/uploads/0730b220b4264fe0b59328ded916626d");
+    player.setSize(40,40);
     player.setPosition(getWidth()/2, (((getHeight()-player.getHeight()-player.getHeight())/2)-player.getHeight()/2));
     add(player);
     
@@ -39,23 +39,29 @@ function start(){
     add(grass);
     world.push(grass);
     
-    var obstacle = new Rectangle(20, 20);
-    obstacle.setColor(Color.red);
-    obstacle.setPosition(getWidth()-obstacle.getWidth(), player.getY()-10);
+    var obstacle = new WebImage("https://codehs.com/uploads/a65acdc24025ab7b48eab031850bd656");
+    obstacle.setSize(500,getHeight());
+    obstacle.setPosition(grass.getX()+grass.getWidth(), getHeight()/2);
     add(obstacle);
     world.push(obstacle);
     
-    var platform = new Rectangle(50, 20);
-    platform.setColor(Color.orange);
+    var platform = new WebImage("https://codehs.com/uploads/6eb514b366411ff94b8a8bd06f899f46");
+    platform.setSize(40,40);
     platform.setPosition(getWidth()+200, grass.getY());
     add(platform);
     world.push(platform);
     
-    var goal = new Rectangle(20, 30);
-    goal.setColor(Color.purple);
-    goal.setPosition(getWidth()+300, grass.getY());
+    var goal = new WebImage("https://codehs.com/uploads/80e6c3902d5fcd8198ef38f58bf2126b");
+    goal.setSize(40, 50);
+    goal.setPosition(getWidth()+300, grass.getY()-45);
     add(goal);
     world.push(goal);
+    
+    var platform2 = new WebImage("https://codehs.com/uploads/6eb514b366411ff94b8a8bd06f899f46");
+    platform2.setSize(40,40);
+    platform2.setPosition(goal.getX(), goal.getY()+goal.getHeight()-5);
+    add(platform2);
+    world.push(platform2);
     
     instuctions = new Text("Arrow keys to move", "10pt Arial");
     instuctions.setPosition(0, instuctions.getHeight());
@@ -74,8 +80,10 @@ function keyDown(e){
 	        var elem = getElementAt(player.getX() - 1, player.getY()+i);
 	        if(elem!=null){
 	            hasElem=true;
-	            if(elem.getColor()==Color.red){
+	            if(elem==world[2]){
                     die();
+                }else if(elem==world[4]){
+                    win();
                 }
 	        }
 	    }
@@ -94,8 +102,10 @@ function keyDown(e){
 	        var elem = getElementAt(player.getX() + player.getWidth() + 1, player.getY()+i);
 	        if(elem!=null){
 	            hasElem=true;
-	            if(elem.getColor()==Color.red){
+	            if(elem==world[2]){
                     die();
+                }else if(elem==world[4]){
+                    win();
                 }
 	        }
 	    }
@@ -128,9 +138,9 @@ function gravity(){
             player.move(0, 5);
         }
     }else{
-        if(elem.getColor()==Color.red){
+        if(elem==world[2]){
             die();
-        }else if(elem.getColor()==Color.purple){
+        }else if(elem==world[4]){
             win();
         }
     }
@@ -147,7 +157,7 @@ function jump(){
         if(elem==null){
             player.move(0,-1);
         }else{
-            if(elem.getColor()==Color.red){
+            if(elem==world[2]){
                 die();
             }
             stopTimer(jump);
