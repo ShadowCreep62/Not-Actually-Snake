@@ -3,33 +3,48 @@ var JUMPHEIGHT = 50;
 var PLAYERHEIGHT = 40;
 var PLAYERWIDTH = PLAYERHEIGHT/2;
 var SPEED = 10;
+var PLAYERIGHT = "https://codehs.com/uploads/0730b220b4264fe0b59328ded916626d";
+var PLAYERLEFT = "https://codehs.com/uploads/c5f4d2cacd57e210491bb9dfa7555cf7";
+var OBSTACLE = "https://codehs.com/uploads/a65acdc24025ab7b48eab031850bd656";
+var GOAL = "https://codehs.com/uploads/80e6c3902d5fcd8198ef38f58bf2126b";
+var PLATFORM = "https://codehs.com/uploads/6eb514b366411ff94b8a8bd06f899f46";
 var brown = new Color(139, 69, 19);
 
 //objects
 var player;
 var instuctions;
 var world;
+var obstacles;
+var jumpers;
+var speeders;
 var replay;
+var goal;
 
 //most recent variables
 var startposition;
 var distTravel;
 
 
-/*the code that will run at the start*/
+
+//Trey
+/*the code that will run at the start which puts the blocks and player 
+    and uses all the other function to create the game*/
 function start(){
     
     world = [];
+    obstacles = [];
+    jumpers = [];
+    speeders = [];
     distTravel = 0;
     
-    player = new  WebImage("https://codehs.com/uploads/0730b220b4264fe0b59328ded916626d");
+    player = new  WebImage(PLAYERIGHT);
     player.setSize(40,40);
-    player.setPosition(getWidth()/2, (((getHeight()-player.getHeight()-player.getHeight())/2)-player.getHeight()/2));
+    player.setPosition(getWidth()/2-20, (((getHeight()-player.getHeight()-player.getHeight())/2)-player.getHeight()/2));
     add(player);
     
     var ground = new Rectangle(getWidth()+50, getHeight()/2);
     ground.setColor(brown);
-    ground.setPosition(0,getHeight()/2);
+    ground.setPosition(0,getHeight()/2+20);
     add(ground);
     world.push(ground);
     
@@ -39,118 +54,118 @@ function start(){
     add(grass);
     world.push(grass);
     
-    var obstacle = new WebImage("https://codehs.com/uploads/a65acdc24025ab7b48eab031850bd656");
-    obstacle.setSize(500,getHeight());
-    obstacle.setPosition(grass.getX()+grass.getWidth(), getHeight()/2);
-    add(obstacle);
-    world.push(obstacle);
+    var platform1 = new WebImage(PLATFORM);
+    platform1.setSize(40,40);
+    platform1.setPosition(getWidth()+200, grass.getY()-20);
+    add(platform1);
+    world.push(platform1);
     
-    var platform = new WebImage("https://codehs.com/uploads/6eb514b366411ff94b8a8bd06f899f46");
-    platform.setSize(40,40);
-    platform.setPosition(getWidth()+200, grass.getY());
-    add(platform);
-    world.push(platform);
-    
-    var goal = new WebImage("https://codehs.com/uploads/80e6c3902d5fcd8198ef38f58bf2126b");
-    goal.setSize(40, 50);
-    goal.setPosition(getWidth()+300, grass.getY()-45);
-    add(goal);
-    world.push(goal);
-    
-    var platform2 = new WebImage("https://codehs.com/uploads/6eb514b366411ff94b8a8bd06f899f46");
+    var platform2 = new WebImage(PLATFORM);
     platform2.setSize(40,40);
-    platform2.setPosition(goal.getX(), goal.getY()+goal.getHeight()-5);
+    platform2.setPosition(platform1.getX()+120, platform1.getY()-40);
     add(platform2);
     world.push(platform2);
+    
+    var wall = new Rectangle(getWidth()/2, getHeight()/2-20);
+    wall.setColor(Color.grey);
+    wall.setPosition(platform2.getX()+120,0);
+    add(wall);
+    world.push(wall);
+    
+    var wallava = new Rectangle(80, getHeight()/2-80);
+    wallava.setColor(Color.red);
+    wallava.setPosition(wall.getX(),wall.getY()+wall.getHeight());
+    add(wallava);
+    obstacles.push(wallava);
+    
+    var wallava2 = new Rectangle(platform2.getWidth(), getHeight());
+    wallava2.setColor(Color.red);
+    wallava2.setPosition(platform2.getX(),platform2.getY()+platform2.getHeight());
+    add(wallava2);
+    obstacles.push(wallava2);
+    
+    var stone = new Rectangle(wallava.getWidth()*2, 60);
+    stone.setColor(Color.grey);
+    stone.setPosition(platform2.getX()+platform2.getWidth(),wallava.getY()+wallava.getHeight()+80);
+    add(stone);
+    world.push(stone);
+    
+    
+    
+    var spped = new Rectangle(40, 40);
+    spped.setColor(Color.orange);
+    spped.setPosition(stone.getX()+stone.getWidth(), stone.getY());
+    add(spped);
+    speeders.push(spped);
+    
+    var jumpad = new Rectangle(20, 20);
+    jumpad.setColor(Color.blue);
+    jumpad.setPosition(getWidth()*3/4, getHeight()/2-20);
+    add(jumpad);
+    jumpers.push(jumpad);
+    
+    var florlava = new Rectangle(getWidth(), stone.getHeight());
+    florlava.setColor(Color.red);
+    florlava.setPosition(spped.getX()+spped.getWidth(),spped.getY());
+    add(florlava);
+    obstacles.push(florlava);
+    
+    
+    goal = new WebImage(GOAL);
+    goal.setSize(40, 50);
+    goal.setPosition(getWidth()+300, grass.getY()-45);
+    // add(goal);
+    world.push(goal);
+    
+    world.push(obstacles);
+    world.push(jumpers);
+    world.push(speeders);
     
     instuctions = new Text("Arrow keys to move", "10pt Arial");
     instuctions.setPosition(0, instuctions.getHeight());
     add(instuctions);
     
 	keyDownMethod(keyDown);
-	setTimer(gravity, 0.2);
+	setTimer(gravity, 0.1);
 }
 
-/*the code that will run when a key is pressed*/
-function keyDown(e){
-    //checks if left buton pressed 
-	if (e.keyCode == Keyboard.LEFT) {
-	    var hasElem = false;
-	    for(var i=0;i<=player.getHeight();i++){
-	        var elem = getElementAt(player.getX() - 1, player.getY()+i);
-	        if(elem!=null){
-	            hasElem=true;
-	            if(elem==world[2]){
-                    die();
-                }else if(elem==world[4]){
-                    win();
-                }
-	        }
-	    }
-	    
-        if(!hasElem){
-            var elem = getElementAt(player.getX()+player.getWidth()/2, player.getY()+player.getHeight());
-            moveWorld(10);
-            distTravel-=10;
-        }
-	}
-	
-	//checks if right buton pressed 
-	if(e.keyCode == Keyboard.RIGHT){
-	    var hasElem = false;
-	    for(var i=0;i<=player.getHeight();i++){
-	        var elem = getElementAt(player.getX() + player.getWidth() + 1, player.getY()+i);
-	        if(elem!=null){
-	            hasElem=true;
-	            if(elem==world[2]){
-                    die();
-                }else if(elem==world[4]){
-                    win();
-                }
-	        }
-	    }
-        if(!hasElem){
-            var elem = getElementAt(player.getX()+player.getWidth()/2, player.getY()+player.getHeight());
-            moveWorld(-10);
-            distTravel+=10;
-        }
-	}
-	
-	//checks if up buton pressed 
-	if (e.keyCode == Keyboard.UP) {
-	    var elemUp = getElementAt(player.getX()+PLAYERWIDTH/2, player.getY()-1);
-	    var elemDown = getElementAt(player.getX()+PLAYERWIDTH/2, player.getY()+player.getHeight()+1);
-	    if(elemUp==null&&elemDown!=null){
-	        startposition = player.getY();
-	        stopTimer(gravity);
-    	    setTimer(jump, 0.2);
-	    }
-	}
-	
-}
-
+/**/
 function gravity(){
-    var elem = getElementAt(player.getX()+PLAYERWIDTH/2, player.getY()+player.getHeight()+1);
-    if(elem==null){
-        if(player.getY()<world[1].getY()){
-    		player.move(0, 1);
-        }else{
-            player.move(0, 5);
-        }
-    }else{
-        if(elem==world[2]){
-            die();
-        }else if(elem==world[4]){
-            win();
+    var hasElem = false;
+    for(var i=10;i<=player.getWidth()-10;i++){
+        var elem = getElementAt(player.getX() + i, player.getY()+player.getHeight()+1);
+        if(elem!=null){
+            hasElem=true;
+            if(isIn(elem, jumpers)){
+                JUMPHEIGHT=100;
+            }else{
+                if(JUMPHEIGHT>50){
+                    JUMPHEIGHT=50;
+                }
+                if(isIn(elem, speeders)){
+                    SPEED=40;
+                }else{
+                    if(SPEED>20){
+                        SPEED=20;
+                    }
+                    if(elem==goal){
+                        win();
+                    }else if(isIn(elem, obstacles)){
+                        die();
+                    }
+                }
+            }
         }
     }
-    
+    if(!hasElem){
+		player.move(0, 1);
+    }
     if(player.getY()>getHeight()){
         die();
     }
-    
 }
 
+/**/
 function jump(){
     if(player.getY()>startposition - JUMPHEIGHT){
         var elem = getElementAt(player.getX()+player.getWidth()/2, player.getY()-1)
@@ -161,34 +176,161 @@ function jump(){
                 die();
             }
             stopTimer(jump);
-            setTimer(gravity, 0.2);
+            setTimer(gravity, 0.1);
         }
     }else{
         stopTimer(jump);
-        setTimer(gravity, 0.2);
+        setTimer(gravity, 0.1);
     }
 }
 
+//Taysir
 function moveWorld(dist){
     for(var i=0;i<world.length;i++){
-        world[i].move(dist, 0);
+        if(world[i] instanceof Array){
+            for(var j=0;j<world[i].length;j++){
+                world[i][j].move(dist, 0);
+            }
+        }else{
+            world[i].move(dist, 0);
+        }
+        
     }
 }
+
+function keyDown(e){
+    //checks if left buton pressed 
+	if (e.keyCode == Keyboard.LEFT) {
+	    player.setImage(PLAYERLEFT);
+	    player.setSize(40, 40);
+	    var hasElem = false;
+	    var hasElemAhead = false;
+	    for(var i=0;i<=player.getHeight();i++){
+	        if(SPEED>20){
+	            for(var j=1;j<22;i++){
+                    var elem = getElementAt(player.getX() - j, player.getY()+i);
+                    if(elem!=null){
+        	            hasElemAhead=true;
+        	            moveWorld(player.getX()-elem.getX());
+                        if(elem==goal){
+                            win();
+                        }else if(isIn(elem, obstacles)){
+                            die();
+                        }
+                    }
+	            }
+            }else{
+                var elem = getElementAt(player.getX() - 1, player.getY()+i);
+                if(elem!=null){
+    	            hasElem=true;
+                    if(elem==goal){
+                        win();
+                    }else if(isIn(elem, obstacles)){
+                        die();
+                    }
+                }
+	        }
+        }
+    
+	    
+        if(!hasElem&&!hasElemAhead){
+            moveWorld(SPEED);
+            distTravel-=SPEED;
+        }
+	}
+	
+	
+	//checks if right buton pressed 
+	if(e.keyCode == Keyboard.RIGHT){
+	    player.setImage(PLAYERIGHT);
+	    player.setSize(40, 40);
+	    var hasElem = false;
+	    for(var i=0;i<=player.getHeight();i++){
+	        var elem = getElementAt(player.getX() + player.getWidth() + 1, player.getY()+i);
+	        if(elem!=null){
+	            
+	            hasElem=true;
+	            if(isIn(elem, speeders)){
+                    SPEED=40;
+                }else{
+                    if(SPEED>20){
+                        SPEED=20;
+                    }
+                    if(elem==goal){
+                        win();
+                    }else if(isIn(elem, obstacles)){
+                        die();
+                    }
+                }
+	        }
+	    
+	    }
+        if(!hasElem){
+            
+            moveWorld(-1*SPEED);
+            distTravel+=SPEED;
+        }
+	}
+	
+	//checks if up buton pressed 
+	if (e.keyCode == Keyboard.UP) {
+	    
+	    var hasElemDown = false;
+        for(var i=10;i<=player.getWidth()-10;i++){
+            var elem = getElementAt(player.getX() + i, player.getY()+player.getHeight()+1);
+            if(elem!=null){
+                hasElemDown = true;
+            }
+        }
+        var hasElemUp = false;
+        for(var i=10;i<=player.getWidth()-10;i++){
+            var elem = getElementAt(player.getX() + i, player.getY()-1);
+            if(elem!=null){
+                hasElemUp = true;
+            }
+        }
+	    if(!hasElemUp&&hasElemDown){
+	        startposition = player.getY();
+	        stopTimer(gravity);
+    	    setTimer(jump, 0.2);
+	    }
+	}
+	
+}
+
+function isIn(elem, list){
+    for(var i=0;i<list.length;i++){
+        if(list[i]==elem){
+            return true;
+        }
+    }
+    return false;
+}
+
+//Charles
 function die(){
     player.setPosition(getWidth()/2, ((getHeight()-player.getHeight()-player.getHeight())/2)-player.getHeight()/2);
     moveWorld(distTravel);
     distTravel = 0;
     stopTimer(jump);
     stopTimer(gravity);
-    setTimer(gravity, 0.2);
+    setTimer(gravity, 0.1);
 }
+
 function win(){
     remove(player);
     remove(instuctions);
     stopTimer(gravity);
     stopTimer(jump);
     for(var i=0;i<world.length;i++){
-        remove(world[i]);
+        if(world[i] instanceof Array){
+            for(var j=0;j<world[i].length;j++){
+                remove(world[i][j]);
+            }
+        }else{
+            remove(world[i]);
+        }
+        
     }
     var victory = new Text("You Win!", "50pt Arial");
     victory.setPosition(getWidth()/2-victory.getWidth()/2, getHeight()/2);
@@ -198,6 +340,7 @@ function win(){
     add(replay);
     mouseClickMethod(mouseClick);
 }
+
 function mouseClick(e){
     var elem = getElementAt(e.getX(), e.getY());
     if(elem==replay){
