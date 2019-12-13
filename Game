@@ -1,3 +1,4 @@
+//Platformer Game
 //Movement control variables
 var JUMPHEIGHT = 50;
 var SPEED = 10;
@@ -294,6 +295,8 @@ function jump(){
 }
 
 //Taysir
+//this function moveWorld makes the world move when the key for the right or left arrow is pressed, 
+//instead of the player moving the world moves sideways thus giving the effect of the player moving forward
 function moveWorld(dist){
     for(var i=0;i<world.length;i++){
         if(world[i] instanceof Array){
@@ -307,7 +310,9 @@ function moveWorld(dist){
     }
     distTravel-=dist;
 }
-
+// this function checks when the key is pressed, and also checks if the player has touched certain obstacles and 
+//makes him go back to start if he dies.
+//this also moves the world sideways when conditions are met depending on whether the left key or right key is pressed.
 function keyDown(e){
     //checks if left buton pressed 
 	if (e.keyCode == Keyboard.LEFT) {
@@ -349,7 +354,8 @@ function keyDown(e){
 	}
 	
 	
-	//checks if right buton pressed 
+	//checks if right buton pressed
+    // moves the world to the left 
 	if(e.keyCode == Keyboard.RIGHT){
 	    player.setImage(PLAYERIGHT);
 	    player.setSize(40, 40);
@@ -382,6 +388,8 @@ function keyDown(e){
 	}
 	
 	//checks if up buton pressed 
+    // the feather where the jump is put in also includes gravity to make the player
+    // fall back down after a certain ammmount of height has been gained by the player
 	if (e.keyCode == Keyboard.UP) {
 	    
 	    var hasElemDown = false;
@@ -407,7 +415,8 @@ function keyDown(e){
 	
 	
 }
-
+// The function isIn returns the true if the list contains the element.
+// If it doesnt, then it will return false.
 function isIn(elem, list){
     for(var i=0;i<list.length;i++){
         if(list[i]==elem){
