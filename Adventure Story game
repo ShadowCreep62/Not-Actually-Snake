@@ -1,0 +1,185 @@
+"""
+Adventure story game WIP
+"""
+import time
+import random
+
+name = input("Hello, what is your name?")
+
+print ("You arrive on an island far away from home, you do not know how you got here")
+raw_input("Press Enter to Continue")
+print ("All you see is a sign with the directions North, South, East or West.")
+raw_input("...")
+path_choice = input("Which way will you head? ")
+
+    
+
+if path_choice == "North":
+    print("You head north")
+    raw_input("...")
+    print("You travel and you come to a small looking shack, it looks abandoned.")
+    raw_input("...")
+    ans = input("Will you travel into the shack? (Yes/No)")
+    
+while ans == ("No"):
+    print("You decided to leave the shack, and fell into a pit.")
+    raw_input("...")
+    ans = input("Will you travel into the shack? (Yes/No)")
+     
+if ans == "Yes":
+    print("You have decided to search the shack")
+    raw_input("...")
+    print("You see supplies such as Food, Water and Gear, and you take them.")
+    raw_input("...")
+    print("You also see a note saying not to go follow the dirt road or.")
+    print("you will fall into a pit and most likely die.")
+    raw_input("...")
+
+print("You see a monster.")
+raw_input("...")
+print("The monster sees you!")
+raw_input("...")
+print("You decide to fight the monster")
+raw_input("...")
+print ("You only have a sword an bow.")
+
+monster_health = 150
+monster_damage = 10
+player_health = 200
+player_damage_bow = 30
+player_damage_sword = 30
+
+while player_health > 0 or monster_health > 0:
+    attack = input("What will you use? (Bow/Sword)")
+    if attack == "Sword":
+        monster_health = player_damage_sword-monster_health
+        print ("you hit the monster for" + str(player_damage_sword) + " damage")
+        print "The monsters health is " + str(monster_health)
+    elif attack == "Bow":
+        monster_health = (monster_health - player_damage_bow)
+        print ("you hit the monster for " + str(player_damage_bow) + " damage")
+        print "The monsters health is " + str(monster_health)
+    print ("The monster hits you for " + str(monster_damage) + " damage")
+    print "Your health is " + str(player_health-monster_damage)
+
+    if player_health <= 0:
+        print ("You lost")
+    
+    elif monster_health <= 0:
+        print ("You beat the monster!")
+        break
+
+print "You beat the monster an unlocked a skill!"
+raw_input("...")
+print "You have unlocked Bomb Throw"
+raw_input("...")
+print "The monster dropped a bag with seemingly an infinite amount of bombs."
+raw_input("...")
+print "You go to sleep under a tree and awake to distant voices."
+raw_input("...")
+print "You discover the voices are not human."
+raw_input("...")
+print "You are afraid, you are not strong enough to fight of the non-human voices."
+raw_input("...")
+print "Every insticnt in your body tells you to run."
+raw_input("...")
+print "You make a break for it"
+raw_input("...")
+print "You start to wander off places and discover a small cottage."
+raw_input("...")
+print "In the cottage you see there are lights on."
+raw_input("...")
+print "You think to yourself."
+raw_input("...")
+print "Who lives here?"
+raw_input("...") 
+
+ans = input("Will you knock on the door (Yes/No)")
+
+while ans == "No":
+    print "You choose this but you get eaten by wolves."
+    ans = input("Will you knock on the door (Yes/No)")
+    
+if ans == "Yes":
+    print "You knock, no one answers, find an alternative path"
+    
+print "You search for an alternative path."
+
+print "You go around and behind the house."
+raw_input("...")
+print "You see a door leading down."
+raw_input("...")
+print "You try to open it."
+raw_input("...")
+print "It opens slightly."
+raw_input("...")
+print "You think, 'Open it fully?'"
+raw_input("...")
+print "You say yes but how?"
+
+ans1 = input("Will you use a bomb to open the door, or pull harder.(bomb/pull)")
+
+if ans1 == "bomb":
+    print "You blew up the entrance, the doors disappear."
+    raw_input("...")
+    
+elif ans1 == "pull":
+    print "You pull, but your hands start hurting and you use a bomb to blow it up."
+    raw_input("...")
+    
+    
+print "You go down the stairway and see a lab."
+raw_input("...")
+print "When you reach the lab, you see someone there on a laptop."
+raw_input("...")
+print "You think, 'How the heck does this person have a laptop in the middle."
+print "of nowhere?"
+raw_input("...")
+print "You approach him."
+raw_input("...")
+print "Without you knowing his laptop says"
+raw_input("...")
+print "OH YOU'RE APPROACHING ME?"
+raw_input("...")
+print "You get startled but don't yell."
+raw_input("...")
+print "You walk closer to the person."
+raw_input("...")
+print "You say, 'Sorry if I startle you but what is this place."
+raw_input("...")
+print "The unknown person says, 'Who are you and why are you in my lab!?"
+raw_input("...")
+print "You say, 'I don't even know how I ended upon this island."
+raw_input("...")
+print "The unknown person says, 'Still don't know why another human would be here."
+raw_input("...")
+print "You ask, 'What do you mean other human?"
+raw_input("...")
+print "I'm human just like you, also the only people who visit me are"
+raw_input("...")
+print "The forest animals and ghosts etc."
+raw_input("...")
+print "you get the jist."
+raw_input("...")
+print "you say, 'I didn't even know this place or ghosts or talking creatures"
+raw_input("...")
+print "Existed until today."
+raw_input("...")
+print "This is all so sudden for me."
+raw_input("...")
+print "The Unknown person says, 'We can discuss that later, but come lets go"
+raw_input("...")
+print "to the house."
+raw_input("...")
+print "You follow the person still not knowing who he/she is."
+raw_input("...")
+print "...They Reach the living room......"
+raw_input("...")
+print "They sit down."
+raw_input("...")
+print "The unknown person says, 'My name is Desire'"
+raw_input("...")
+print "What's yours?"
+raw_input("...")
+print "Oh my name is " + name
+raw_input("...")
