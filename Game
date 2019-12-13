@@ -220,7 +220,7 @@ function gravity(){
 			
 				//checks if jumpheight is more then normal
                 if(JUMPHEIGHT>50){
-					sets it to normal
+					//sets it to normal
                     JUMPHEIGHT=50;
                 }
 				
