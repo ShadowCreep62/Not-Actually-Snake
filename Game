@@ -418,6 +418,10 @@ function isIn(elem, list){
 }
 
 //Charles
+/*
++ This function sets the measurements of the character, and controlls its movements
++ When  this sprite jumps, the gravity function comes into play, suspending it in air for some time, then dropping it down afterwards.
+*/
 function die(){
     player.setPosition(getWidth()/2, ((getHeight()-player.getHeight()-player.getHeight())/2)-player.getHeight()/2);
     moveWorld(distTravel);
@@ -428,7 +432,7 @@ function die(){
     stopTimer(gravity);
     setTimer(gravity, 0.1);
 }
-
+//Once the game is completed,everything is deleted
 function win(){
     remove(player);
     remove(instuctions);
@@ -452,7 +456,7 @@ function win(){
     add(replay);
     mouseClickMethod(mouseClick);
 }
-
+//Restarts game if it is completed
 function mouseClick(e){
     var elem = getElementAt(e.getX(), e.getY());
     if(elem==replay){
