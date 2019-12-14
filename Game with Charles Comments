@@ -1,0 +1,465 @@
+//Movement control variables
+var JUMPHEIGHT = 50;
+var SPEED = 10;
+
+//A color not provided in the color class that was used in the program
+var brown = new Color(139, 69, 19);
+
+//Images created for this game to represent different objects
+var PLAYERIGHT = "https://codehs.com/uploads/0730b220b4264fe0b59328ded916626d";
+var PLAYERLEFT = "https://codehs.com/uploads/c5f4d2cacd57e210491bb9dfa7555cf7";
+var GOAL = "https://codehs.com/uploads/4773e4498050c6fee0387c551208ec06";
+var PLATFORM = "https://codehs.com/uploads/6eb514b366411ff94b8a8bd06f899f46";
+
+//Objects that are used throughout multiple functions which require them to be made golbal here
+var player;
+var instuctions;
+var world;
+var obstacles;
+var jumpers;
+var speeders;
+var replay;
+var goal;
+
+//Variables that keep track of a position so that it will go back to the origonal spot
+var startposition;
+var distTravel;
+
+
+
+//Trey
+/*the code that will run at the start which puts the blocks and player 
+    and uses all the other function to create the game*/
+function start(){
+    
+    //Inizalizes the variable declaired above to be empty
+    world = [];
+    obstacles = [];
+    jumpers = [];
+    speeders = [];
+    distTravel = 0;
+    
+    //creates the player sets its size, position, and adds it to the screen
+    player = new  WebImage(PLAYERIGHT);
+    player.setSize(40,40);
+    player.setPosition(getWidth()/2-20, (((getHeight()-player.getHeight()-player.getHeight())/2)-player.getHeight()/2));
+    add(player);
+    
+    //creates the ground sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var ground = new Rectangle(getWidth()+50, getHeight()/2);
+    ground.setColor(brown);
+    ground.setPosition(0,getHeight()/2+20);
+    add(ground);
+    world.push(ground);
+    
+    //creates the grass sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var grass = new Rectangle(getWidth()+50, 20);
+    grass.setColor(Color.green);
+    grass.setPosition(0,getHeight()/2);
+    add(grass);
+    world.push(grass);
+    
+    //creates the platform sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var platform1 = new WebImage(PLATFORM);
+    platform1.setSize(40,40);
+    platform1.setPosition(getWidth()+200, grass.getY()-20);
+    add(platform1);
+    world.push(platform1);
+    
+    //creates the platform sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var platform2 = new WebImage(PLATFORM);
+    platform2.setSize(40,40);
+    platform2.setPosition(platform1.getX()+120, platform1.getY()-40);
+    add(platform2);
+    world.push(platform2);
+    
+    //creates the wall sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var wall = new Rectangle(getWidth(), getHeight()/2-20);
+    wall.setColor(Color.grey);
+    wall.setPosition(platform2.getX()+120,0);
+    add(wall);
+    world.push(wall);
+    
+    //creates the lava wall sets its size, position, adds it to the screen, and puts it into the obstacles so that it will kill(used later)
+    var wallava = new Rectangle(80, getHeight()/2-80);
+    wallava.setColor(Color.red);
+    wallava.setPosition(wall.getX(),wall.getY()+wall.getHeight());
+    add(wallava);
+    obstacles.push(wallava);
+    
+    //creates the lava wall sets its size, position, adds it to the screen, and puts it into the obstacles so that it will kill(used later)
+    var wallava2 = new Rectangle(platform2.getWidth(), getHeight());
+    wallava2.setColor(Color.red);
+    wallava2.setPosition(platform2.getX(),platform2.getY()+platform2.getHeight());
+    add(wallava2);
+    obstacles.push(wallava2);
+    
+    //creates the stone sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var stone = new Rectangle(wallava.getWidth()*2, 60);
+    stone.setColor(Color.grey);
+    stone.setPosition(platform2.getX()+platform2.getWidth(),wallava.getY()+wallava.getHeight()+80);
+    add(stone);
+    world.push(stone);
+    
+    //creates the speed block sets its size, position, adds it to the screen, and puts it into the world so that it will speed up the player(used later)
+    var spped = new Rectangle(40, 40);
+    spped.setColor(Color.orange);
+    spped.setPosition(stone.getX()+stone.getWidth(), stone.getY());
+    add(spped);
+    speeders.push(spped);
+    
+    //creates the platform sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var platform3 = new WebImage(PLATFORM);
+    platform3.setSize(40,40);
+    platform3.setPosition(spped.getX()+spped.getWidth()+800, spped.getY());
+    add(platform3);
+    world.push(platform3);
+    
+    //creates the jump pad sets its size, position, adds it to the screen, and puts it into the world so that it will make the player jump higher(used later)
+    var jumpad = new Rectangle(40, 40);
+    jumpad.setColor(Color.blue);
+    jumpad.setPosition(platform3.getX()+platform3.getWidth(), platform3.getY());
+    add(jumpad);
+    jumpers.push(jumpad);
+    
+    //creates the ground sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var ground2 = new Rectangle(40, getHeight());
+    ground2.setColor(brown);
+    ground2.setPosition(jumpad.getX()+jumpad.getWidth()*3,100);
+    add(ground2);
+    world.push(ground2);
+    
+    //creates the obstacle wall sets its size, position, adds it to the screen, and puts it into the obstacles so that it will kill(used later)
+    var obsacle = new Rectangle(40, 100);
+    obsacle.setColor(Color.red);
+    obsacle.setPosition(ground2.getX()+ground2.getWidth()*4,(ground2.getY()+ground2.getHeight()/10)-80);
+    add(obsacle);
+    obstacles.push(obsacle);
+    
+    //creates the obstacle wall sets its size, position, adds it to the screen, and puts it into the obstacles so that it will kill(used later)
+    var obsacle2 = new Rectangle(40, 40);
+    obsacle2.setColor(Color.red);
+    obsacle2.setPosition(ground2.getX()+ground2.getWidth()*2,ground2.getY()+ground2.getHeight()/4);
+    add(obsacle2);
+    obstacles.push(obsacle2);
+    
+    //creates the obstacle wall sets its size, position, adds it to the screen, and puts it into the obstacles so that it will kill(used later)
+    var obsacle3 = new Rectangle(40, 40);
+    obsacle3.setColor(Color.red);
+    obsacle3.setPosition(ground2.getX()+ground2.getWidth()*3,ground2.getY()+ground2.getHeight()/3);
+    add(obsacle3);
+    obstacles.push(obsacle3);
+    
+    //creates the platform sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var platform4 = new WebImage(PLATFORM);
+    platform4.setSize(40,40);
+    platform4.setPosition(obsacle3.getX()+obsacle3.getWidth(), obsacle3.getY());
+    add(platform4);
+    world.push(platform4);
+    
+    //creates the grass sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var grass2 = new Rectangle(getWidth(), 20);
+    grass2.setColor(Color.green);
+    grass2.setPosition(platform4.getX()+100,getHeight()-40);
+    add(grass2);
+    world.push(grass2);
+    
+    //creates the ground sets its size, position, adds it to the screen, and puts it into the world so that it will move(used later)
+    var ground3 = new Rectangle(getWidth(), 100);
+    ground3.setColor(brown);
+    ground3.setPosition(platform4.getX()+100,getHeight()-20);
+    add(ground3);
+    world.push(ground3);
+    
+    //creates the goal wall sets its size, position, adds it to the screen, and puts it into the obstacles so that it will let the user win(used later)
+    goal = new WebImage(GOAL);
+    goal.setSize(80, 80);
+    goal.setPosition(ground3.getX()+ground3.getWidth()-goal.getWidth(), grass2.getY()-goal.getHeight());
+    add(goal);
+    world.push(goal);
+    
+    //puts the obstacles, jumpers, and speeders into world so they can move(used later)
+    world.push(obstacles);
+    world.push(jumpers);
+    world.push(speeders);
+    
+    //puts up text so that the user will know how to control the player
+    instuctions = new Text("Arrow keys to move", "10pt Arial");
+    instuctions.setPosition(0, instuctions.getHeight());
+    add(instuctions);
+    
+    //constantly checks if the user presses a key on the keyboard
+    keyDownMethod(keyDown);
+    
+    //sets a timer that constantly pushes the user down like gravity
+    setTimer(gravity, 0.1);
+}
+
+/*A function that will be run almost constantly that pushes the user down like gravity*/
+function gravity(){
+	//sets a variable to false to become true if there is something in the way
+    var hasElem = false;
+	
+	//loops through each point along the player to make sure there isn't a block anywhere
+    for(var i=10;i<=player.getWidth()-10;i++){
+	
+		//gets the element below the player
+        var elem = getElementAt(player.getX() + i, player.getY()+player.getHeight()+1);
+		
+		//checks if the element is something
+        if(elem!=null){
+		
+			//sets hasElem to true
+            hasElem = true;
+			
+			//checks if elem is in jumpers
+            if(isIn(elem, jumpers)){
+				//sets jumpheght to 400
+                JUMPHEIGHT=400;
+            }else{
+			
+				//checks if jumpheight is more then normal
+                if(JUMPHEIGHT>50){
+					//sets it to normal
+                    JUMPHEIGHT=50;
+                }
+				
+				//checks if elem is in
+                if(isIn(elem, speeders)){
+					//sets speed to 40
+                    SPEED=40;
+                }else{
+				
+					//checks if speed is iregular
+                    if(SPEED>20){
+						//sets speed back to normal
+                        SPEED=10;
+                    }
+					
+					//checks if elem is the goal
+                    if(elem==goal){
+						//send the player to the win screen
+                        win();
+					//checks if elem is in obstacles
+                    }else if(isIn(elem, obstacles)){
+						//kills the player
+                        die();
+                    }
+                }
+            }
+        }
+    }
+	//checks if there wasn't anything
+    if(!hasElem){
+		//moves the player down like gravity
+		player.move(0, 1);
+    }
+	//checks if the player is below the screen
+    if(player.getY()>getHeight()){
+		//kills the player
+        die();
+    }
+}
+
+/*This function causes the player to go up to simulate a jump which will be looped through until it reaches over its jump height*/
+function jump(){
+	//checks if the player is above the jumpheight relitive to where it had started
+    if(player.getY()>startposition - JUMPHEIGHT){
+	
+		//gets the element above the player
+        var elem = getElementAt(player.getX()+player.getWidth()/2, player.getY()-1)
+		
+		//checks if the element is nothing
+        if(elem==null){
+			//moves the player up
+            player.move(0,-1);
+			
+			
+        }else{
+			//checks if the element is in obtacles
+            if(isIn(elem, obstacles)){
+				//kills the player
+                die();
+            }
+			//stops the jump and put gravity back on
+            stopTimer(jump);
+            setTimer(gravity, 0.1);
+        }
+	
+    }else{
+		//stops the jump and put gravity back on
+        stopTimer(jump);
+        setTimer(gravity, 0.1);
+    }
+}
+
+//Taysir
+function moveWorld(dist){
+    for(var i=0;i<world.length;i++){
+        if(world[i] instanceof Array){
+            for(var j=0;j<world[i].length;j++){
+                world[i][j].move(dist, 0);
+            }
+        }else{
+            world[i].move(dist, 0);
+        }
+        
+    }
+    distTravel-=dist;
+}
+
+function keyDown(e){
+    //checks if left buton pressed 
+	if (e.keyCode == Keyboard.LEFT) {
+	    player.setImage(PLAYERLEFT);
+	    player.setSize(40, 40);
+	    var hasElem = false;
+	    var hasElemAhead = false;
+	    for(var i=0;i<=player.getHeight();i++){
+	        if(SPEED>20){
+	            for(var j=1;j<22;j++){
+                    var elem = getElementAt(player.getX() - j, player.getY()+i);
+                    if(elem!=null){
+        	            hasElemAhead=true;
+        	            moveWorld(player.getX()-elem.getX());
+                        if(elem==goal){
+                            win();
+                        }else if(isIn(elem, obstacles)){
+                            die();
+                        }
+                    }
+	            }
+            }else{
+                var elem = getElementAt(player.getX() - 1, player.getY()+i);
+                if(elem!=null){
+    	            hasElem=true;
+                    if(elem==goal){
+                        win();
+                    }else if(isIn(elem, obstacles)){
+                        die();
+                    }
+                }
+	        }
+        }
+    
+	    
+        if(!hasElem&&!hasElemAhead){
+            moveWorld(SPEED);
+        }
+	}
+	
+	
+	//checks if right buton pressed 
+	if(e.keyCode == Keyboard.RIGHT){
+	    player.setImage(PLAYERIGHT);
+	    player.setSize(40, 40);
+	    var hasElem = false;
+	    for(var i=0;i<=player.getHeight();i++){
+	        var elem = getElementAt(player.getX() + player.getWidth() + 1, player.getY()+i);
+	        if(elem!=null){
+	            
+	            hasElem=true;
+	            if(isIn(elem, speeders)){
+                    SPEED=40;
+                }else{
+                    if(SPEED>20){
+                        SPEED=20;
+                    }
+                    if(elem==goal){
+                        win();
+                    }else if(isIn(elem, obstacles)){
+                        die();
+                    }
+                }
+	        }
+	    
+	    }
+        if(!hasElem){
+            
+            moveWorld(-1*SPEED);
+            
+        }
+	}
+	
+	//checks if up buton pressed 
+	if (e.keyCode == Keyboard.UP) {
+	    
+	    var hasElemDown = false;
+        for(var i=10;i<=player.getWidth()-10;i++){
+            var elem = getElementAt(player.getX() + i, player.getY()+player.getHeight()+1);
+            if(elem!=null){
+                hasElemDown = true;
+            }
+        }
+        var hasElemUp = false;
+        for(var i=10;i<=player.getWidth()-10;i++){
+            var elem = getElementAt(player.getX() + i, player.getY()-1);
+            if(elem!=null){
+                hasElemUp = true;
+            }
+        }
+	    if(!hasElemUp&&hasElemDown){
+	        startposition = player.getY();
+	        stopTimer(gravity);
+    	    setTimer(jump, 0.2);
+	    }
+	}
+	
+	
+}
+
+function isIn(elem, list){
+    for(var i=0;i<list.length;i++){
+        if(list[i]==elem){
+            return true;
+        }
+    }
+    return false;
+}
+
+//Charles
+/*
++ Resets player and his stats
+*/
+function die(){
+    player.setPosition(getWidth()/2, ((getHeight()-player.getHeight()-player.getHeight())/2)-player.getHeight()/2);
+    moveWorld(distTravel);
+    distTravel = 0;
+    JUMPHEIGHT=50;
+    SPEED=10;
+    stopTimer(jump);
+    stopTimer(gravity);
+    setTimer(gravity, 0.1);
+}
+//Once the game is completed,everything is deleted
+function win(){
+    remove(player);
+    remove(instuctions);
+    stopTimer(gravity);
+    stopTimer(jump);
+    for(var i=0;i<world.length;i++){
+        if(world[i] instanceof Array){
+            for(var j=0;j<world[i].length;j++){
+                remove(world[i][j]);
+            }
+        }else{
+            remove(world[i]);
+        }
+        
+    }
+    var victory = new Text("You Win!", "50pt Arial");
+    victory.setPosition(getWidth()/2-victory.getWidth()/2, getHeight()/2);
+    add(victory);
+    replay = new Text("Play Again?", "25pt Arial");
+    replay.setPosition(getWidth()/2-replay.getWidth()/2, getHeight()/2+replay.getHeight()*2);
+    add(replay);
+    mouseClickMethod(mouseClick);
+}
+//Restarts game if it is completed
+function mouseClick(e){
+    var elem = getElementAt(e.getX(), e.getY());
+    if(elem==replay){
+        removeAll();
+        start();
+    }
+}
